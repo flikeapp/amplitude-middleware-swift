@@ -12,20 +12,11 @@ import Amplitude
 // convertyPayload converts Middleware Payload (event,extra) into JSON Dictionary Data
 func convertPayload(event: NSMutableDictionary,extra: NSMutableDictionary?) -> Data {
     // convert to JSON ....
-    print("converting event JSON")
     var data: [String: NSMutableDictionary]
-    if extra != nil {
-        print("event with extra")
-        data = ["event": event, "extra": extra!]
-    } else {
-        print("event without extra")
-        data = ["event": event]
-    }
     guard let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []) else {
-        print("Error when converting JSON")
+        print("[FLIKE] Error when converting JSON")
         return Data()
     }
-    print(jsonData)
     return jsonData
 }
 
@@ -37,15 +28,11 @@ func makeFlikeMiddleware(keyId: String, key: String) -> AMPBlockMiddleware {
     // create the Middleware handler
     let loggingMiddleware = AMPBlockMiddleware
         { (payload, next) in
-            // Output event and extra from payload
-            print("FlikeMiddleWare:")
-            //let payload_string = String(format:"[ampli] event=\(payload.event) payload=\(String(describing: payload.extra))")
-            //print(payload_string)
-            // make http post request
-            let requestString = "https://ingest.goflike.app/amplitude/\(keyId)"
+            // send raw data off to flike backend
+            let requestString = "https://ingest.flike.app/amplitude/\(keyId)"
             let requestUrl = URL(string: requestString)
             if requestUrl == nil {
-                print("FlikeMiddleWare: URL creation error")
+                print("[FLIKE] URL creation error")
                 /// Returns `nil` if a `URL` cannot be formed with the string (for example, if the string contains characters that are illegal in a URL, or is an empty string).
                 return
             }
@@ -58,14 +45,11 @@ func makeFlikeMiddleware(keyId: String, key: String) -> AMPBlockMiddleware {
             
             // http response handler?
             let dataTask = URLSession.shared.dataTask(with: request) { data, response, error in
-                // print("FlikeMiddleware: handle response")
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                    // print("FlikeMiddleware: HttpResponse error")
+                    // TODO: retry with backoff like gtm.js
                     return
                 }
                 // Request will time out! Ignore
-                //print("httpResponse.statusCode \(httpResponse.statusCode)")
-                //print("FlikeMiddleware: handle response success")
             }
             // make dataTask go
             dataTask.resume()
