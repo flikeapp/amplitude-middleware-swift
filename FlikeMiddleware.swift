@@ -24,12 +24,12 @@ func convertPayload(event: NSMutableDictionary,extra: NSMutableDictionary?) -> D
 
 
 // makeFlikeMiddleware constructs the AmplitudeMiddleware that sends the Amplitude Event to Flike's Server.
-func makeFlikeMiddleware(keyId: String, key: String) -> AMPBlockMiddleware {
+func makeFlikeMiddleware(customerId: String, key: String) -> AMPBlockMiddleware {
     // create the Middleware handler
     let loggingMiddleware = AMPBlockMiddleware
         { (payload, next) in
             // send raw data off to flike backend
-            let requestString = "https://ingest.flike.app/amplitude/\(keyId)"
+            let requestString = "https://ingest.flike.app/amplitude/\(customerId)"
             let requestUrl = URL(string: requestString)
             if requestUrl == nil {
                 print("[FLIKE] URL creation error")

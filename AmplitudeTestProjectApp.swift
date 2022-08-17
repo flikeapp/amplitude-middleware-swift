@@ -20,7 +20,7 @@ struct AmplitudeTestProjectApp: App {
         // Set userId
         Amplitude.instance().setUserId("userId")
         // get FlikeMiddleware
-        let flikeMiddleWare = makeFlikeMiddleware(keyId: "yourFlikeKeyId", key: "yourFlikeKey")
+        let flikeMiddleWare = makeFlikeMiddleware(customerId: "<your Flike customer ID>", key: "<your Flike public API key>")
         // add the Middleware
         Amplitude.instance().addEventMiddleware(flikeMiddleWare)
         
