@@ -9,10 +9,14 @@ import Foundation
 import Amplitude
 
 
-// convertyPayload converts Middleware Payload (event,extra) into JSON Dictionary Data
-func convertPayload(event: NSMutableDictionary,extra: NSMutableDictionary?) -> Data {
+// convertPayload converts Middleware Payload (event, extra) into JSON Dictionary Data
+func convertPayload(event: NSMutableDictionary, extra: NSMutableDictionary?) -> Data {
     // convert to JSON ....
-    var data: [String: NSMutableDictionary]
+    var data: [String: NSMutableDictionary] = ["event": event]
+    if let extra = extra {
+        data["extra"] = extra
+    }
+    
     guard let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []) else {
         print("[FLIKE] Error when converting JSON")
         return Data()
